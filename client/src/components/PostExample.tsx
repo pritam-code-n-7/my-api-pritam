@@ -38,6 +38,9 @@ function PostExample(): JSX.Element {
   const handlePost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      // Fetch latest ID again before posting
+      await fetchLatestId();
+
       const res = await axios.post<Post>("http://localhost:3003/api/myitems", {
         title,
         body,
@@ -46,7 +49,6 @@ function PostExample(): JSX.Element {
       console.log("Post created:", res.data);
       setTitle("");
       setBody("");
-      setLatestId(latestId + 1); // Increment latestId for the next post
     } catch (error) {
       console.error("Error creating post", error);
     }
