@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PostExample from "./components/PostExample";
-import Body from "./components/Body";
+import Body from "./components/Body"
 import GetExample from "./components/GetExample";
 import PutExample from "./components/PutExample";
 import DeleteExample from "./components/DeleteExample";

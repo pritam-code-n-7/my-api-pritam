@@ -38,6 +38,7 @@ function DeleteExample() {
           Delete
         </button>
       </div>
+
       <div className="flex justify-end p-4">
         <BlackButton name="body" type="button" onClick={handleRoute} />
       </div>

@@ -45,6 +45,8 @@ function PostExample(): JSX.Element {
     e.preventDefault();
     try {
       const newId = latestId + 1; // Increment the latestId to get a new unique ID for the post
+      // Fetch latest ID again before posting
+      await fetchLatestId();
 
       const res = await axios.post<Post>("http://localhost:3003/api/myitems", {
         title,
