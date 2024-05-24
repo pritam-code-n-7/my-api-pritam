@@ -1,15 +1,20 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import BlackButton from "../Button/BlackButton";
 
-function PutExample() {
-  const [userId, setUserId] = useState(""); // State variable for the id
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+function PutExample(): JSX.Element {
+  const route = useNavigate();
+  function handleRoute() {
+    route("/delete");
+  }
+  const [userId, setUserId] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [body, setBody] = useState<string>("");
 
-  const handleUpdate = async (e: { preventDefault: () => void }) => {
+  const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // Convert userId to a number
       const id = parseInt(userId);
 
       if (isNaN(id)) {
@@ -17,25 +22,34 @@ function PutExample() {
         return;
       }
 
-      // Prepare the data to be updated
-      const updatedData = {
-        title,
-        body,
-        userId: id, // Update userId with the parsed id
-      };
+      const updatedData = { title, body, userId: id };
+      const url = `http://localhost:3003/api/myitems`; // Remove the userId from the URL
 
-      // Make the PUT request to update data at the specified userId index
-      const url = `http://localhost:3003/api/myitems/${id}`;
-      const res = await axios.put(url, updatedData);
-      console.log("Post updated:", res.data);
+      await axios.put(`${url}/${id}`, updatedData); // Append userId to the URL here
+      console.log("Post updated successfully");
 
-      // Reset form fields after successful update
-      setTitle("");
-      setBody("");
-      setUserId("");
-    } catch (err) {
-      console.error("Post error", err);
+      resetForm();
+    } catch (error) {
+      console.error("Error updating post:", error);
     }
+  };
+
+  const resetForm = () => {
+    setUserId("");
+    setTitle("");
+    setBody("");
+  };
+
+  const handleUserIdChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setUserId(e.target.value);
+  };
+
+  const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
+
+  const handleBodyChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setBody(e.target.value);
   };
 
   return (
@@ -45,20 +59,20 @@ function PutExample() {
         <input
           type="text"
           value={userId}
-          onChange={(e) => setUserId(e.target.value)} // Update the id state
+          onChange={handleUserIdChange}
           placeholder="User ID"
           className="block w-full p-2 border border-gray-300 rounded mb-4"
         />
         <input
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={handleTitleChange}
           placeholder="Title"
           className="block w-full p-2 border border-gray-300 rounded mb-4"
         />
         <textarea
           value={body}
-          onChange={(e) => setBody(e.target.value)}
+          onChange={handleBodyChange}
           placeholder="Body"
           className="block w-full p-2 border border-gray-300 rounded mb-4"
         ></textarea>
@@ -69,6 +83,9 @@ function PutExample() {
           Submit
         </button>
       </form>
+      <div className="flex justify-end p-4">
+        <BlackButton name="delete" type="button" onClick={handleRoute} />
+      </div>
     </div>
   );
 }

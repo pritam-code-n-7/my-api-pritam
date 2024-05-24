@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BlackButton from "../Button/BlackButton";
 
 interface Post {
   userId: number;
@@ -9,6 +11,10 @@ interface Post {
 }
 
 function GetExample() {
+  const route = useNavigate();
+  function handleRoute() {
+    route("/put");
+  }
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -37,6 +43,9 @@ function GetExample() {
           <p>{post.body}</p>
         </div>
       ))}
+      <div className="flex justify-end p-4">
+        <BlackButton name="put" type="button" onClick={handleRoute} />
+      </div>
     </div>
   );
 }

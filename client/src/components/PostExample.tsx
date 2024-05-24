@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import BlackButton from "../Button/BlackButton";
 
 interface Post {
   title: string;
@@ -8,20 +10,24 @@ interface Post {
 }
 
 function PostExample(): JSX.Element {
+  const route = useNavigate()
+  function handleRoute() {
+    route("/get");
+  }
   const [title, setTitle] = useState<string>("");
   const [body, setBody] = useState<string>("");
   const [latestId, setLatestId] = useState<number>(0);
 
   useEffect(() => {
     fetchLatestId();
-  }, []);
+  }, []); // Fetch the latest ID only once when the component mounts
 
   const fetchLatestId = async () => {
     try {
       const response = await axios.get<number>(
         "http://localhost:3003/api/latestId"
       );
-      setLatestId(response.data + 1); // Increment to get a new unique ID
+      setLatestId(response.data); // Set the latest ID fetched from the backend
     } catch (error) {
       console.error("Error fetching latest ID", error);
     }
@@ -38,17 +44,17 @@ function PostExample(): JSX.Element {
   const handlePost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // Fetch latest ID again before posting
-      await fetchLatestId();
+      const newId = latestId + 1; // Increment the latestId to get a new unique ID for the post
 
       const res = await axios.post<Post>("http://localhost:3003/api/myitems", {
         title,
         body,
-        userId: latestId, // Use the latestId obtained from the backend
+        userId: newId, // Use the new unique ID for the post
       });
       console.log("Post created:", res.data);
       setTitle("");
       setBody("");
+      setLatestId((prevId) => prevId + 1); // Update latestId using the previous value to ensure consistency
     } catch (error) {
       console.error("Error creating post", error);
     }
@@ -78,6 +84,9 @@ function PostExample(): JSX.Element {
           Submit
         </button>
       </form>
+      <div className="flex justify-end p-4">
+        <BlackButton name="get" type="button" onClick={handleRoute} />
+      </div>
     </div>
   );
 }

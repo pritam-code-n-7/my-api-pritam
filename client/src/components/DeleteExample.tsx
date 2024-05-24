@@ -1,7 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
+import BlackButton from "../Button/BlackButton";
+import { useNavigate } from "react-router-dom";
 
 function DeleteExample() {
+  const route = useNavigate();
+  function handleRoute() {
+    route("/");
+  }
   const [userId, setUserId] = useState("");
 
   const handleDelete = async () => {
@@ -31,6 +37,9 @@ function DeleteExample() {
         >
           Delete
         </button>
+      </div>
+      <div className="flex justify-end p-4">
+        <BlackButton name="body" type="button" onClick={handleRoute} />
       </div>
     </div>
   );
